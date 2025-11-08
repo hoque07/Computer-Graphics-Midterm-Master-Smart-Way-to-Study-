@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Computer Graphics — Midterm Master (NBR)</title>
+<style>
+  :root{
+    --bg:#f6f7f8;
+    --card:#ffffff;
+    --muted:#6b6f76;
+    --accent:#0a84ff;
+    --shadow: 0 6px 20px rgba(15, 15, 15, 0.08);
+    --radius:16px;
+    --text:#0b0b0b;
+  }
+  .dark{
+    --bg:#0b0d10;
+    --card:#0f1114;
+    --muted:#9aa0a6;
+    --accent:#64b5ff;
+    --shadow: 0 10px 30px rgba(0,0,0,0.6);
+    --text:#eaeef2;
+  }
+  html,body{height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(10,132,255,0.06), transparent),
+    radial-gradient(1000px 600px at 90% 90%, rgba(88,199,255,0.04), transparent),
+    var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+  header{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px; max-width:1200px; margin:18px auto; }
+  .brand{ display:flex; gap:14px; align-items:center; }
+  .logo{ width:56px; height:56px; border-radius:14px; background: linear-gradient(135deg,var(--accent), #5ee0ff); display:grid; place-items:center; box-shadow: var(--shadow); color: white; font-weight:800; font-size:16px; letter-spacing:1px; }
+  h1{ margin:0; font-size:18px; letter-spacing:-0.2px; }
+  p.lead{ margin:0; color:var(--muted); font-size:13px; }
+  .controls{ display:flex; gap:10px; align-items:center; }
+  .toggle{ background:var(--card); border-radius:999px; padding:6px; box-shadow: var(--shadow); display:flex; gap:8px; align-items:center; }
+  .btn{ background:linear-gradient(180deg,var(--accent), #1177ff); color:white; border:none; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; box-shadow: 0 6px 18px rgba(10,132,255,0.12); }
+  main{ max-width:1200px; margin:12px auto 80px; padding:22px; display:grid; grid-template-columns: 1fr 360px; gap:20px; }
+  .card{ background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4)); border-radius: var(--radius); padding:18px; box-shadow: var(--shadow); backdrop-filter: blur(8px) saturate(120%); }
+  .dark .card{ background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); }
+  .hero{ position:relative; overflow:visible; margin-bottom:10px; border-radius:12px; min-height:80px; }
+  .blob{ position:absolute; filter: blur(20px) contrast(110%); opacity:0.16; z-index:0; mix-blend-mode:screen; }
+  .blob.b1{ width:420px; height:300px; left:-80px; top:-60px; background:linear-gradient(135deg,var(--accent), #00d4ff); border-radius:46% 54% 44% 56% / 50% 45% 55% 50%; animation: float 7s ease-in-out infinite; }
+  .blob.b2{ width:300px; height:220px; right:-40px; bottom:-20px; background:linear-gradient(135deg,#8ef6ff, #a6f0ff); opacity:0.12; border-radius:46% 54% 60% 40% / 45% 55% 40% 60%; animation: float 9s ease-in-out infinite reverse; }
+  @keyframes float { 0%{ transform: translateY(0) rotate(0deg);} 50%{ transform: translateY(-18px) rotate(6deg);} 100%{ transform: translateY(0) rotate(0deg);} }
+  .section{ position:relative; z-index:2; }
+  nav.toc{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 14px 0; }
+  nav.toc a{ text-decoration:none; padding:8px 10px; background:var(--card); border-radius:10px; color:var(--accent); box-shadow: var(--shadow); font-weight:700; font-size:13px; }
+  .topic{ padding:14px; border-radius:12px; margin-bottom:10px; background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.45)); box-shadow: 0 6px 18px rgba(11,11,11,0.04); }
+  .dark .topic{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
+  .topic h3{ margin:0 0 6px 0; font-size:15px; }
+  .topic p{ margin:0; color:var(--muted); font-size:13px; line-height:1.55; }
+  .topic ul{ margin:6px 0 6px 18px; color:var(--muted); }
+  .topic li{ margin:4px 0; }
+  table{ width:100%; border-collapse:collapse; margin:8px 0; font-size:13px; }
+  th,td{ text-align:left; padding:8px 6px; border-bottom:1px dashed rgba(0,0,0,0.06); color:var(--muted); }
+  .tip{ background: linear-gradient(90deg, rgba(250,250,255,0.8), rgba(242,246,255,0.6)); padding:10px; border-radius:10px; margin-top:8px; color:var(--muted); }
+  .dark .tip{ background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
+  aside .card{ position:sticky; top:20px; max-height:82vh; overflow:auto; padding-bottom:20px; }
+  @media (max-width:1000px){ main{ grid-template-columns: 1fr; padding:14px; } aside .card{ position:static; max-height:none; } }
+  footer{ max-width:1200px; margin:30px auto; padding:14px; color:var(--muted); text-align:center; font-size:13px;}
+  @media print{
+    html,body{ background:#fff !important; }
+    header .controls, .hero .blob, .toggle, .btn{ display:none !important; }
+    main{ grid-template-columns: 1fr; margin:0 auto; padding:0; }
+    .card, .topic, .tip{ box-shadow:none !important; background:#fff !important; }
+    a{ text-decoration:none; color:#000; }
+    footer{ margin-top:24px; }
+  }
+</style>
+</head>
+<body id="page">
+<header>
+  <div class="brand">
+    <div class="logo">NBR</div>
+    <div>
+      <h1>Computer Graphics — Midterm Master (Up to Mid Syllabus)</h1>
+      <p class="lead">Zero-to-Exam: theory + derivations + solved examples + prediction pattern — in one page.</p>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="toggle card" title="Toggle dark mode">
+      <label style="font-size:13px; color:var(--muted); margin-right:6px;">Dark</label>
+      <input id="darkToggle" type="checkbox" aria-label="Dark mode toggle" />
+    </div>
+    <button class="btn" id="downloadPdfBtn">Download PDF</button>
+  </div>
+</header>
+
+<main>
+  <section class="card content">
+    <div class="hero">
+      <div class="blob b1"></div>
+      <div class="blob b2"></div>
+      <div class="section">
+        <h2>How to use</h2>
+        <p>Read topics in order, then solve one numeric per algorithm. Use the right-hand panel for quick formulas & exam hacks.</p>
+        <nav class="toc" aria-label="Table of contents">
+          <a href="#intro">Introduction</a>
+          <a href="#devices">Video Display Devices</a>
+          <a href="#dda">DDA Line</a>
+          <a href="#bresenham">Bresenham Line</a>
+          <a href="#circle">Midpoint Circle</a>
+          <a href="#antialias">Anti‑Aliasing</a>
+          <a href="#transform">2D Transformations</a>
+          <a href="#pattern">Exam Pattern & Priority</a>
+          <a href="#schedule">1‑Day Plan</a>
+        </nav>
+      </div>
+    </div>
+
+    <div id="intro" class="section">
+      <h2>1) Introduction to Computer Graphics</h2>
+      <article class="topic">
+        <h3>Definition & Uses</h3>
+        <p><strong>Computer Graphics</strong> is using computers to create, manipulate and display pictures on screens or printers. Typical uses: CAD/CAM, GUI, education & training simulators, visualization, image processing, games, movies, VFX, advertising.</p>
+        <div class="tip">Key terms: pixel, frame/refresh buffer, refresh rate (Hz), resolution, aspect ratio.</div>
+      </article>
+    </div>
+
+    <div id="devices" class="section">
+      <h2>2) Video Display Devices</h2>
+      <article class="topic">
+        <h3>CRT basics</h3>
+        <ul>
+          <li>Electron gun → focusing & deflection → phosphor screen.</li>
+          <li>Raster‑scan: scans rows top→bottom, 60–80 Hz using frame buffer.</li>
+          <li>Random‑scan: draws line segments directly (vector display).</li>
+        </ul>
+      </article>
+      <article class="topic">
+        <h3>Color CRT</h3>
+        <ul>
+          <li><strong>Beam Penetration</strong> (random‑scan): limited colors (red, green, orange, yellow).</li>
+          <li><strong>Shadow Mask</strong> (raster‑scan): 3 electron guns (RGB), wide color & realism.</li>
+        </ul>
+      </article>
+      <article class="topic">
+        <h3>DVST vs CRT</h3>
+        <table>
+          <tr><th>CRT</th><th>DVST</th></tr>
+          <tr><td>Needs continuous refresh; flicker on dynamic images</td><td>No refresh; flicker‑free; image stored</td></tr>
+          <tr><td>Good for animation</td><td>Best for static images; no partial erase</td></tr>
+        </table>
+      </article>
+      <article class="topic">
+        <h3>Flat Panels</h3>
+        <p><strong>Emissive:</strong> Plasma, LED, TFEL. <strong>Non‑emissive:</strong> LCD.</p>
+        <ul>
+          <li><b>LED:</b> Low power, long life.</li>
+          <li><b>LCD:</b> Polarizers + liquid crystal + backlight; low power but limited viewing angle, fixed native resolution.</li>
+        </ul>
+      </article>
+    </div>
+
+    <div id="dda" class="section">
+      <h2>3) DDA Line Algorithm</h2>
+      <article class="topic">
+        <h3>Idea, Equations & Pseudocode</h3>
+        <p>Step along the driving axis and increment the other by slope \(m=\Delta y/\Delta x\). Plot rounded coordinates.</p>
+        <ul>
+          <li>If \(|m|\le 1\): \(x_{k+1}=x_k+1,\; y_{k+1}=y_k+m\)</li>
+          <li>Else: \(y_{k+1}=y_k+1,\; x_{k+1}=x_k+1/m\)</li>
+        </ul>
+<pre style="white-space:pre-wrap;background:transparent;border:none;margin:6px 0;color:var(--muted)">
+dx=x2-x1; dy=y2-y1
+steps=max(|dx|,|dy|)
+x_inc=dx/steps; y_inc=dy/steps
+x=x1; y=y1
+for i=0..steps: plot(round(x),round(y)); x+=x_inc; y+=y_inc
+</pre>
+        <div class="tip">Cons: floating point + rounding → slower; may accumulate error. Prefer Bresenham for speed.</div>
+      </article>
+      <article class="topic">
+        <h3>Solved Example (1 → 4, slope 2/3)</h3>
+        <p>From (1,1) to (4,3): points ≈ (1,1), (2,1.67), (3,2.34), (4,3.01) → rounded: (1,1),(2,2),(3,2),(4,3).</p>
+      </article>
+    </div>
+
+    <div id="bresenham" class="section">
+      <h2>4) Bresenham Line Algorithm</h2>
+      <article class="topic">
+        <h3>Derivation & Update</h3>
+        <p>Choose between E=(x+1,y) and NE=(x+1,y+1) by a decision variable. Integer‑only arithmetic.</p>
+        <ul>
+          <li>Init: \(p_0=2\Delta y-\Delta x\)</li>
+          <li>If \(p_k<0\): E → \(p_{k+1}=p_k+2\Delta y\)</li>
+          <li>Else: NE → \(p_{k+1}=p_k+2\Delta y-2\Delta x\)</li>
+        </ul>
+      </article>
+      <article class="topic">
+        <h3>Solved Example (9,18)→(14,22)</h3>
+        <p>dx=5, dy=4, p0=3 → sequence: (9,18),(10,19),(11,19),(12,20),(13,21),(14,22).</p>
+        <div class="tip">Handle other octants by swapping x/y or mirroring signs.</div>
+      </article>
+      <article class="topic">
+        <h3>DDA vs Bresenham</h3>
+        <table>
+          <tr><th>DDA</th><th>Bresenham</th></tr>
+          <tr><td>Float + rounding</td><td>Integer only (fast)</td></tr>
+          <tr><td>Conceptually simple</td><td>Accurate; industry standard</td></tr>
+        </table>
+      </article>
+    </div>
+
+    <div id="circle" class="section">
+      <h2>5) Midpoint Circle Algorithm</h2>
+      <article class="topic">
+        <h3>Key Ideas & Recurrence</h3>
+        <p>Use circle function \(f(x,y)=x^2+y^2-r^2\) and the midpoint between E and SE to decide the next pixel in the first octant; mirror to 8 octants.</p>
+        <ul>
+          <li>Init at (0,r): \(p_0=1-r\)</li>
+          <li>If \(p_k<0\): choose E → \(p_{k+1}=p_k+2x_{k+1}+1\)</li>
+          <li>Else: choose SE → \(p_{k+1}=p_k+2x_{k+1}+1-2y_{k+1}\)</li>
+        </ul>
+      </article>
+      <article class="topic">
+        <h3>Solved Example (r=10)</h3>
+        <p>Start (0,10), p0=−9 → (1,10),(2,10),(3,9),(4,9),(5,8),(6,7),(7,7) stop when x&gt;y; reflect to all octants.</p>
+      </article>
+    </div>
+
+    <div id="antialias" class="section">
+      <h2>6) Anti‑Aliasing (bonus/short)</h2>
+      <article class="topic">
+        <h3>What & Why</h3>
+        <p>Aliasing = jagged stair‑steps on edges due to discrete pixels & insufficient sampling. Anti‑aliasing smooths edges.</p>
+        <ul>
+          <li>Increase resolution (costly)</li>
+          <li>Area/weighted sampling (prefiltering)</li>
+          <li>Supersampling + post‑filtering</li>
+        </ul>
+      </article>
+    </div>
+
+    <div id="transform" class="section">
+      <h2>7) 2D Transformations (Homogeneous 3×3)</h2>
+      <article class="topic">
+        <h3>Core Matrices</h3>
+        <table>
+          <tr><th>Transform</th><th>Matrix</th></tr>
+          <tr><td>Translation</td><td>[[1,0,tx],[0,1,ty],[0,0,1]]</td></tr>
+          <tr><td>Scaling</td><td>[[sx,0,0],[0,sy,0],[0,0,1]]</td></tr>
+          <tr><td>Rotation (θ)</td><td>[[cosθ,−sinθ,0],[sinθ,cosθ,0],[0,0,1]]</td></tr>
+          <tr><td>Shear x / y</td><td>[[1,h,0],[0,1,0],[0,0,1]] / [[1,0,0],[g,1,0],[0,0,1]]</td></tr>
+          <tr><td>Reflections</td><td>X: [[1,0,0],[0,−1,0],[0,0,1]]; Y: [[−1,0,0],[0,1,0],[0,0,1]]</td></tr>
+        </table>
+        <div class="tip">Rotate/scale about point (px,py): T(px,py)·R/S·T(−px,−py). Order matters!</div>
+      </article>
+      <article class="topic">
+        <h3>Worked Minis</h3>
+        <ul>
+          <li>Translate (4,5) by (2,1) → (6,6)</li>
+          <li>Scale (2,3) by (2,3) → (4,9)</li>
+          <li>Rotate (4,0) by 90° → (0,4)</li>
+          <li>Reflect (x,y) about x‑axis → (x,−y)</li>
+        </ul>
+      </article>
+    </div>
+
+    <div id="pattern" class="section">
+      <h2>8) Exam Pattern & Topic Priority (25 marks)</h2>
+      <table>
+        <tr><th>Rank</th><th>Topic</th><th>Weight</th><th>Typical ask</th></tr>
+        <tr><td>1</td><td>Bresenham Line</td><td>5–7</td><td>Derive + step table</td></tr>
+        <tr><td>2</td><td>Midpoint Circle</td><td>5–7</td><td>Compute points + symmetry</td></tr>
+        <tr><td>3</td><td>2D Transformations</td><td>5–7</td><td>Apply matrices / coords</td></tr>
+        <tr><td>4</td><td>DDA Line</td><td>4–5</td><td>Algorithm + numeric</td></tr>
+        <tr><td>5</td><td>Display Devices</td><td>3–5</td><td>CRT/DVST; LED vs LCD</td></tr>
+        <tr><td>6</td><td>Intro/Applications</td><td>2–3</td><td>List uses / definition</td></tr>
+        <tr><td>7</td><td>Anti‑Aliasing</td><td>1–2</td><td>What & how</td></tr>
+      </table>
+    </div>
+
+    <div id="schedule" class="section">
+      <h2>9) One‑Day Plan (night‑before)</h2>
+      <table>
+        <tr><th>Time</th><th>Topic</th><th>Focus</th></tr>
+        <tr><td>09:00–10:00</td><td>Intro + Devices</td><td>Definitions, CRT/DVST diagrams</td></tr>
+        <tr><td>10:00–11:30</td><td>DDA</td><td>Equations + 1 example</td></tr>
+        <tr><td>11:30–13:00</td><td>Bresenham</td><td>Derivation + table</td></tr>
+        <tr><td>14:00–15:00</td><td>Midpoint Circle</td><td>p0 & updates + r=8</td></tr>
+        <tr><td>15:00–16:00</td><td>2D Transformations</td><td>Matrices + two numerics</td></tr>
+        <tr><td>16:00–17:00</td><td>Anti‑Aliasing + Review</td><td>3 methods & keyword list</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <aside>
+    <div class="card">
+      <h3 style="margin:0;">Formula Quick‑Look</h3>
+      <ul>
+        <li>DDA: \(m=dy/dx\); step on major axis; round(x,y)</li>
+        <li>Bresenham: \(p_0=2dy-dx\); if p&lt;0 → E; else → NE</li>
+        <li>Circle: \(p_0=1-r\); E/SE rules; 8‑way symmetry</li>
+        <li>Rotation: \(x'=x\cos\theta-y\sin\theta,\; y'=x\sin\theta+y\cos\theta\)</li>
+      </ul>
+      <div class="tip">Show every \(p_k\) update in tables for full marks.</div>
+      <hr style="border:none;height:1px;background:linear-gradient(90deg,rgba(0,0,0,0.06),transparent);margin:12px 0;">
+      <details open><summary>5‑mark template</summary>
+        <p>Definition (1) → Core idea (1) → Formula (1) → Mini example (2).</p>
+      </details>
+      <details><summary>Diagram checklist</summary>
+        <p>CRT block diagram • DVST internals • Line steps table • Circle octants • Matrix pipeline.</p>
+      </details>
+      <details><summary>Exam hacks</summary>
+        <p>Normalize slope to first octant for Bresenham; write initial values clearly; keep units (Hz, pixels) for devices.</p>
+      </details>
+    </div>
+  </aside>
+</main>
+
+<footer>© NBR — Computer Graphics Midterm Master</footer>
+
+<script>
+  const toggle = document.getElementById('darkToggle');
+  const saved = localStorage.getItem('isDarkCG');
+  if(saved === '1'){ document.documentElement.classList.add('dark'); toggle.checked = true; }
+  toggle.addEventListener('change', (e)=>{
+    if(e.target.checked){ document.documentElement.classList.add('dark'); localStorage.setItem('isDarkCG','1'); }
+    else{ document.documentElement.classList.remove('dark'); localStorage.setItem('isDarkCG','0'); }
+  });
+  document.getElementById('downloadPdfBtn').addEventListener('click', ()=> {
+    const wasDark = document.documentElement.classList.contains('dark');
+    if(wasDark){ document.documentElement.classList.remove('dark'); }
+    window.print();
+    if(wasDark){ document.documentElement.classList.add('dark'); }
+  });
+</script>
+</body>
+</html>
